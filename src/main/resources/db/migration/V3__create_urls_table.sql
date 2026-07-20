@@ -1,4 +1,4 @@
-CREATE TABLE urls (
+CREATE TABLE IF NOT EXISTS urls (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     original_url VARCHAR(2048) NOT NULL,
     short_code VARCHAR(8) NOT NULL UNIQUE,
@@ -9,9 +9,8 @@ CREATE TABLE urls (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NULL,
     user_id BIGINT NOT NULL,
-    CONSTRAINT fk_urls_user FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT fk_urls_user FOREIGN KEY (user_id) REFERENCES users(id),
+    INDEX idx_urls_short_code (short_code),
+    INDEX idx_urls_custom_alias (custom_alias),
+    INDEX idx_urls_user_id (user_id)
 );
-
-CREATE INDEX idx_urls_short_code ON urls (short_code);
-CREATE INDEX idx_urls_custom_alias ON urls (custom_alias);
-CREATE INDEX idx_urls_user_id ON urls (user_id);
