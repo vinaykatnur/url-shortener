@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -57,8 +58,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         Instant now = Instant.now();
         Instant todayStart = startOfToday();
         long clicksToday = clickEventRepository.countByUrlIdSince(urlId, todayStart);
-        long clicksLast7Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(7, ChronoUnit.DAYS));
-        long clicksLast30Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(30, ChronoUnit.DAYS));
+        long clicksLast7Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(Duration.ofDays(7)));
+        long clicksLast30Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(Duration.ofDays(30)));
         Instant firstClick = clickEventRepository.findFirstClickDateByUrlId(urlId).orElse(null);
         Instant lastClick = clickEventRepository.findLastClickDateByUrlId(urlId).orElse(null);
         return new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), totalClicks, clicksToday, clicksLast7Days, clicksLast30Days, firstClick, lastClick);
@@ -83,7 +84,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         Instant now = Instant.now();
         Instant todayStart = startOfToday();
         return urlRepository.findTop10ByOrderByClickCountDesc().stream()
-                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), todayStart), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(7, ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(30, ChronoUnit.DAYS)), clickEventRepository.findFirstClickDateByUrlId(url.getId()).orElse(null), clickEventRepository.findLastClickDateByUrlId(url.getId()).orElse(null)))
+                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), todayStart), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(Duration.ofDays(7))), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(Duration.ofDays(30))), clickEventRepository.findFirstClickDateByUrlId(url.getId()).orElse(null), clickEventRepository.findLastClickDateByUrlId(url.getId()).orElse(null)))
                 .collect(Collectors.toList());
     }
 
