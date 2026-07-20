@@ -40,6 +40,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final CacheManager cacheManager;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserUrlAnalyticsResponse> getMyUrlsAnalytics(String userEmail) {
         User user = findUserByEmail(userEmail);
         return urlRepository.findByUserId(user.getId(), PageRequest.of(0, Integer.MAX_VALUE)).getContent().stream()
@@ -52,6 +53,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UrlAnalyticsResponse getUrlAnalytics(Long urlId, String userEmail) {
         Url url = findUrlByIdAndAuthorize(urlId, userEmail);
         long totalClicks = clickEventRepository.countByUrlId(urlId);
