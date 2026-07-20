@@ -1,0 +1,39 @@
+# Exclude local build output and cache
+target/
+*.jar
+*.war
+*.ear
+
+# Exclude IDEs and configuration
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.factorypath
+.nbproject/
+
+# Exclude git directories and metadata
+.git/
+.gitignore
+.github/
+
+# Exclude local environment configs and secret files
+.env
+.env.*
+application-local.properties
+application-dev.properties
+*.log
+logs/
+
+# Exclude OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Exclude frontend sources in backend dockerignore (as frontend has its own build context)
+frontend/
+node_modules/

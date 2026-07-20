@@ -1,0 +1,48 @@
+# Maven build targets
+target/
+*.jar
+*.war
+*.ear
+
+# Node / React Frontend build targets
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+**/build/
+.eslintcache
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.factorypath
+.nbproject/
+
+# Operating System files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Environment Configuration & Secrets
+.env
+.env.*
+!.env.example
+
+application-local.properties
+
+
+*.pem
+*.key
+*.jks

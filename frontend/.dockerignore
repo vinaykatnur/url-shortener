@@ -1,0 +1,19 @@
+# Exclude local build output and dependencies
+node_modules/
+dist/
+build/
+.eslintcache
+
+# Exclude local environment configs and secret files
+.env
+.env.*
+*.log
+
+# Exclude IDEs and configuration
+.idea/
+.vscode/
+
+# Exclude OS files
+Thumbs.db
+.DS_Store
+desktop.ini
