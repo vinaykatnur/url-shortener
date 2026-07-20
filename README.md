@@ -21,7 +21,7 @@ Horizon is a high-performance, secure, and production-ready URL shortener and re
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 Unlike simple CRUD-focused URL shorteners that perform direct database lookups for every request, **Horizon** is engineered from the ground up as a production-grade backend application designed to handle high-velocity link resolution. 
 
 ### Why Horizon?
@@ -30,7 +30,7 @@ In a standard web environment, querying database disks for every URL redirection
 2.  **Asynchronous Analytics Telemetry**: Redirect click logging, country/city detection, and user-agent analysis are decoupled from the main request thread and processed asynchronously, keeping redirect latencies extremely fast.
 3.  **Strict Security Filtering**: Implements database-backed JWT blacklist refreshes, real-time user enablement checks, and rate-limiting structures to safeguard the platform against abuse.
 
-### 📐 Trade-offs & Design Choices
+###  Trade-offs & Design Choices
 *   **Monolithic Architecture**: Chosen for simplicity, faster development iteration, and deployment ease.
 *   **Redis as a Cache Only**: Configured purely as an ephemeral cache, not as the primary datastore, preserving clean relational integrity.
 *   **MySQL Database**: Chosen for ACID-compliant transactional consistency and robust relational queries.
@@ -40,9 +40,9 @@ In a standard web environment, querying database disks for every URL redirection
 
 ---
 
-## ✨ Features
+##  Features
 
-### 🔐 Authentication & Security
+###  Authentication & Security
 *   **Dual-Token Lifecycle**: Stateless JWT access tokens handle request validation. DB-backed UUID Refresh Tokens authorize access token renewal.
 *   **Strict Account Enablement**: The security pipeline intercepts requests to check the `isEnabled` flag, enabling administrators to instantly block compromised accounts.
 *   **BCrypt Verification**: Secure, salted password storage using BCrypt (strength 10) prevents credential exposure.
@@ -54,25 +54,25 @@ In a standard web environment, querying database disks for every URL redirection
 *   **Flexible Expirations**: Configurable expiration timestamps or "Never Expires" options.
 *   **State Control**: Instant activation and deactivation toggling of links.
 
-### 📊 Real-Time Analytics
+###  Real-Time Analytics
 *   **Redirect Telemetry**: Logs IP addresses, operating systems, browsers, and geolocations (country/city).
 *   **High-Volume Telemetry**: Tracks click counts, last-access dates, and historical access profiles.
 *   **User Analytics Modal**: Graphical charts displaying click trends over 1-day, 7-day, and 30-day windows.
 
-### ⚡ Performance & Fail-Safe Architecture
+###  Performance & Fail-Safe Architecture
 *   **Write-Through Caching**: Redis caches URL details (`urlCache`) on first read to avoid subsequent database hits.
 *   **Proactive Eviction**: Link updates, deletes, and custom alias changes trigger targeted cache invalidations.
 *   **Fail-Open Redis Handling**: In the event of a Redis outage, all lookup and rate-limiting routines fail open to the database to ensure zero downtime.
 *   **Sliding-Window Rate Limiting**: Distributed sliding-window checks block spam bots and brute-force register attempts.
 
-### 🛠️ Administration & Auditing
+###  Administration & Auditing
 *   **Admin Dashboard**: Platform-wide metrics (total users, active links, redirect statistics, top URLs).
 *   **User Management**: Enables admins to disable or enable accounts.
 *   **System Audit Logging**: Records events (`USER_REGISTER`, `USER_LOGIN`, `URL_UPDATE`, `URL_DELETE`, `ADMIN_USER_DISABLE`) to audit logs.
 
 ---
 
-## 🚀 Architectural Overview
+##  Architectural Overview
 
 ### 1. Platform Topology
 The application routes frontend requests through Nginx to isolate static asset delivery from the Spring Boot API:
@@ -156,7 +156,7 @@ sequenceDiagram
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Component | Technology | Version | Description |
 | :--- | :--- | :--- | :--- |
@@ -209,33 +209,8 @@ sequenceDiagram
 
 ---
 
-## 🖼️ Screenshots
 
-<details>
-<summary>📸 View User Interface Placeholders</summary>
-
-### Login View
-`[Screenshot Placeholder: Login Page - Clean glassmorphism styled form validation rejecting invalid logins]`
-
-### Registration View
-`[Screenshot Placeholder: Registration Page - Validation checks on weak passwords and malformed emails]`
-
-### Dashboard View
-`[Screenshot Placeholder: Main User Dashboard - Quick shortening cards and active user links list]`
-
-### Link Analytics Modal
-`[Screenshot Placeholder: Graphical click tracking over 1-day, 7-day, and 30-day timelines]`
-
-### Admin Control panel
-`[Screenshot Placeholder: Admin Control Panel - Account disabling buttons and platform audit logs]`
-
-### OpenAPI Documentation
-`[Screenshot Placeholder: Swagger UI - Interactive endpoint request testing schema]`
-</details>
-
----
-
-## ⚙️ Installation & Running
+##  Installation & Running
 
 Horizon supports profile-specific configurations using Spring Profiles:
 *   **`dev` (Development, default)**: Uses local development defaults (local Redis, local DB credentials) and logs detailed stacktraces/SQL executions.
@@ -362,7 +337,7 @@ All API responses are wrapped in a standard JSON envelope:
 
 ---
 
-## ⚡ Performance Optimizations
+##  Performance Optimizations
 
 ### Why Redis?
 *   **Reduce repeated database reads**: Caches hot link destinations, avoiding disk reads for static mapping values.
@@ -381,7 +356,7 @@ All API responses are wrapped in a standard JSON envelope:
 
 ---
 
-## 📦 Production Readiness
+##  Production Readiness
 *   **Profile-Based Operations**: Uses Spring Boot profiles to separate development and production properties.
 *   **No Hardcoded Secrets**: Production configs require database passwords and keys to be injected via environment variables.
 *   **Error Masking**: Errors are processed by global exception handlers to return standard JSON envelopes rather than raw Java stack traces.
@@ -389,7 +364,7 @@ All API responses are wrapped in a standard JSON envelope:
 
 ---
 
-## 🧠 Challenges & Lessons Learned
+##  Challenges & Lessons Learned
 During development, several production-oriented challenges were identified and resolved:
 *   **Improved JWT authentication** by separating registration from login.
 *   **Fixed legacy expiration handling** by migrating epoch-based values to `null`.
@@ -400,7 +375,7 @@ During development, several production-oriented challenges were identified and r
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 *   **QR Code Utilities**: Auto-generate QR codes for shortened links.
 *   **Custom Domain Routing**: Support custom user domains.
 *   **Password Protection**: Allow users to lock redirect links behind password gates.
@@ -409,7 +384,7 @@ During development, several production-oriented challenges were identified and r
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 Contributions are welcome! Please follow these steps:
 1.  Fork the repository.
 2.  Create a branch for your feature (`git checkout -b feature/amazing-feature`).
@@ -419,5 +394,6 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Author
+
+**Vinay Katnur**
