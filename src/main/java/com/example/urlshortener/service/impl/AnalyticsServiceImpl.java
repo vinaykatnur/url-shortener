@@ -46,13 +46,18 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    private Instant startOfToday() {
+        return java.time.LocalDate.now(java.time.ZoneOffset.UTC).atStartOfDay(java.time.ZoneOffset.UTC).toInstant();
+    }
+
     @Override
     @Cacheable(value = "urlAnalytics", key = "#urlId")
     public UrlAnalyticsResponse getUrlAnalytics(Long urlId, String userEmail) {
         Url url = findUrlByIdAndAuthorize(urlId, userEmail);
         long totalClicks = clickEventRepository.countByUrlId(urlId);
         Instant now = Instant.now();
-        long clicksToday = clickEventRepository.countByUrlIdSince(urlId, now.truncatedTo(ChronoUnit.DAYS));
+        Instant todayStart = startOfToday();
+        long clicksToday = clickEventRepository.countByUrlIdSince(urlId, todayStart);
         long clicksLast7Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(7, ChronoUnit.DAYS));
         long clicksLast30Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(30, ChronoUnit.DAYS));
         Instant firstClick = clickEventRepository.findFirstClickDateByUrlId(urlId).orElse(null);
@@ -67,17 +72,19 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         long totalUrls = urlRepository.count();
         long activeUrls = urlRepository.countByActiveTrue();
         long totalClicks = clickEventRepository.countAllClicks();
-        Instant now = Instant.now();
-        long urlsCreatedToday = urlRepository.countByCreatedAtAfter(now.truncatedTo(ChronoUnit.DAYS));
-        long usersRegisteredToday = userRepository.countByCreatedAtAfter(now.truncatedTo(ChronoUnit.DAYS));
+        Instant todayStart = startOfToday();
+        long urlsCreatedToday = urlRepository.countByCreatedAtAfter(todayStart);
+        long usersRegisteredToday = userRepository.countByCreatedAtAfter(todayStart);
         return new DashboardStatsResponse(totalUsers, totalUrls, activeUrls, totalClicks, urlsCreatedToday, usersRegisteredToday);
     }
 
     @Override
     @Cacheable(value = "topUrls")
     public List<UrlAnalyticsResponse> getTopUrls() {
+        Instant now = Instant.now();
+        Instant todayStart = startOfToday();
         return urlRepository.findTop10ByOrderByClickCountDesc().stream()
-                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().truncatedTo(ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(7, ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(30, ChronoUnit.DAYS)), clickEventRepository.findFirstClickDateByUrlId(url.getId()).orElse(null), clickEventRepository.findLastClickDateByUrlId(url.getId()).orElse(null)))
+                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), todayStart), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(7, ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), now.minus(30, ChronoUnit.DAYS)), clickEventRepository.findFirstClickDateByUrlId(url.getId()).orElse(null), clickEventRepository.findLastClickDateByUrlId(url.getId()).orElse(null)))
                 .collect(Collectors.toList());
     }
 

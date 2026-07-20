@@ -44,11 +44,6 @@ public class RedisConfig implements CachingConfigurer {
         com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
         mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
         mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.activateDefaultTyping(
-            mapper.getPolymorphicTypeValidator(),
-            com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping.NON_FINAL,
-            com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
-        );
         return new GenericJackson2JsonRedisSerializer(mapper);
     }
 
