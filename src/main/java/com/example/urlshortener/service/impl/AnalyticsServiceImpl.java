@@ -55,8 +55,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         long clicksToday = clickEventRepository.countByUrlIdSince(urlId, now.truncatedTo(ChronoUnit.DAYS));
         long clicksLast7Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(7, ChronoUnit.DAYS));
         long clicksLast30Days = clickEventRepository.countByUrlIdSince(urlId, now.minus(30, ChronoUnit.DAYS));
-        Instant firstClick = clickEventRepository.findFirstClickDateByUrlId(urlId);
-        Instant lastClick = clickEventRepository.findLastClickDateByUrlId(urlId);
+        Instant firstClick = clickEventRepository.findFirstClickDateByUrlId(urlId).orElse(null);
+        Instant lastClick = clickEventRepository.findLastClickDateByUrlId(urlId).orElse(null);
         return new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), totalClicks, clicksToday, clicksLast7Days, clicksLast30Days, firstClick, lastClick);
     }
 
@@ -77,7 +77,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Cacheable(value = "topUrls")
     public List<UrlAnalyticsResponse> getTopUrls() {
         return urlRepository.findTop10ByOrderByClickCountDesc().stream()
-                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().truncatedTo(ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(7, ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(30, ChronoUnit.DAYS)), clickEventRepository.findFirstClickDateByUrlId(url.getId()), clickEventRepository.findLastClickDateByUrlId(url.getId())))
+                .map(url -> new UrlAnalyticsResponse(url.getId(), url.getOriginalUrl(), url.getShortCode(), url.getCustomAlias(), url.getClickCount(), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().truncatedTo(ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(7, ChronoUnit.DAYS)), clickEventRepository.countByUrlIdSince(url.getId(), Instant.now().minus(30, ChronoUnit.DAYS)), clickEventRepository.findFirstClickDateByUrlId(url.getId()).orElse(null), clickEventRepository.findLastClickDateByUrlId(url.getId()).orElse(null)))
                 .collect(Collectors.toList());
     }
 

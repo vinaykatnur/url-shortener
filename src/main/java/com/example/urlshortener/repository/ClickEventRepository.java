@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface ClickEventRepository extends JpaRepository<ClickEvent, Long> {
 
@@ -18,10 +19,10 @@ public interface ClickEventRepository extends JpaRepository<ClickEvent, Long> {
     long countByUrlIdSince(@Param("urlId") Long urlId, @Param("from") Instant from);
 
     @Query("SELECT MIN(c.clickedAt) FROM ClickEvent c WHERE c.url.id = :urlId")
-    Instant findFirstClickDateByUrlId(@Param("urlId") Long urlId);
+    Optional<Instant> findFirstClickDateByUrlId(@Param("urlId") Long urlId);
 
     @Query("SELECT MAX(c.clickedAt) FROM ClickEvent c WHERE c.url.id = :urlId")
-    Instant findLastClickDateByUrlId(@Param("urlId") Long urlId);
+    Optional<Instant> findLastClickDateByUrlId(@Param("urlId") Long urlId);
 
     List<ClickEvent> findTop10ByUrlOrderByClickedAtDesc(Url url);
 
