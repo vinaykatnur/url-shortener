@@ -384,13 +384,6 @@ During development, several production-oriented challenges were identified and r
 
 ---
 
-##  Contributing
-Contributions are welcome! Please follow these steps:
-1.  Fork the repository.
-2.  Create a branch for your feature (`git checkout -b feature/amazing-feature`).
-3.  Commit your changes (`git commit -m 'Add amazing feature'`).
-4.  Push the branch (`git push origin feature/amazing-feature`).
-5.  Open a Pull Request.
 
 ---
 
