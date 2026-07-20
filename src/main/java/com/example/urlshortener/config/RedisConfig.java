@@ -25,10 +25,10 @@ public class RedisConfig implements CachingConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(RedisConfig.class);
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
+    // @Bean
+    // public RedisConnectionFactory redisConnectionFactory() {
+    //     return new LettuceConnectionFactory();
+    // }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, GenericJackson2JsonRedisSerializer jacksonSerializer) {
