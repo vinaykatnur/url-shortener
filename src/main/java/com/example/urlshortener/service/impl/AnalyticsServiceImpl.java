@@ -113,14 +113,15 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private Url findUrlByIdAndAuthorize(Long urlId, String userEmail) {
         Url url = urlRepository.findById(urlId)
                 .orElseThrow(() -> new ResourceNotFoundException("URL not found"));
-        if (!isOwnerOrAdmin(url.getUser().getEmail(), userEmail)) {
+        String ownerEmail = (url.getUser() != null) ? url.getUser().getEmail() : null;
+        if (!isOwnerOrAdmin(ownerEmail, userEmail)) {
             throw new AccessDeniedException("Access denied");
         }
         return url;
     }
 
     private boolean isOwnerOrAdmin(String ownerEmail, String currentEmail) {
-        if (ownerEmail.equalsIgnoreCase(currentEmail)) {
+        if (ownerEmail != null && currentEmail != null && ownerEmail.equalsIgnoreCase(currentEmail)) {
             return true;
         }
         org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
