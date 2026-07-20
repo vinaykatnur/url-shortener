@@ -51,7 +51,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
-    @Cacheable(value = "urlAnalytics", key = "#urlId")
     public UrlAnalyticsResponse getUrlAnalytics(Long urlId, String userEmail) {
         Url url = findUrlByIdAndAuthorize(urlId, userEmail);
         long totalClicks = clickEventRepository.countByUrlId(urlId);
