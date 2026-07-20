@@ -46,3 +46,6 @@ application-local.properties
 *.pem
 *.key
 *.jks
+
+META-INF/
+
