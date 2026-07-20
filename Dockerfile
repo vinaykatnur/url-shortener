@@ -9,4 +9,7 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/url-shortener-0.0.1-SNAPSHOT.jar ./url-shortener.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "url-shortener.jar"]
+
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=50.0 -XX:InitialRAMPercentage=25.0 -Xss256k -XX:MaxMetaspaceSize=160m -XX:ReservedCodeCacheSize=48m -XX:+UseSerialGC -XX:+ExitOnOutOfMemoryError"
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar url-shortener.jar"]
