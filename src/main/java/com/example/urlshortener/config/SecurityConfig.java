@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
+import org.springframework.http.HttpMethod;
+
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -43,6 +45,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/v1/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**", "/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
