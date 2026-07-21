@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import apiClient from '../api/axiosClient';
+import { getShortUrl } from '../utils/urlHelper';
 
 const DashboardPage = () => {
   const [stats, setStats] = useState(null);
@@ -27,10 +28,6 @@ const DashboardPage = () => {
     };
     loadStats();
   }, []);
-
-  const getShortUrl = (code) => {
-    return `${window.location.protocol}//${window.location.hostname}:8080/${code}`;
-  };
 
   return (
     <div className="d-flex flex-column min-vh-100">

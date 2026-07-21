@@ -2,6 +2,7 @@ import { useState } from 'react';
 import apiClient from '../api/axiosClient';
 import UrlAnalyticsModal from './UrlAnalyticsModal';
 import { formatExpirationDate } from '../utils/dateFormatter';
+import { getShortUrl } from '../utils/urlHelper';
 
 const UrlList = ({ urls, onActionComplete }) => {
   const [editingId, setEditingId] = useState(null);
@@ -19,10 +20,6 @@ const UrlList = ({ urls, onActionComplete }) => {
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
-  };
-
-  const getShortUrl = (code) => {
-    return `${window.location.protocol}//${window.location.hostname}:8080/${code}`;
   };
 
   const handleCopy = (code) => {

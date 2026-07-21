@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-if (!apiBaseUrl) {
-  throw new Error("VITE_API_BASE_URL is not configured.");
-}
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://url-shortener-umev.onrender.com/api/v1';
 
 const apiClient = axios.create({
   baseURL: apiBaseUrl,

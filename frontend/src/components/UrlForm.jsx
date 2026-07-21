@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import apiClient from '../api/axiosClient';
+import { getShortUrl } from '../utils/urlHelper';
 
 const UrlForm = ({ onCreate }) => {
   const [originalUrl, setOriginalUrl] = useState('');
@@ -41,7 +42,7 @@ const UrlForm = ({ onCreate }) => {
       const response = await apiClient.post('/urls', payload);
       const newUrl = response.data.data;
       
-      const shortUrl = `${window.location.protocol}//${window.location.hostname}:8080/${newUrl.shortCode}`;
+      const shortUrl = getShortUrl(newUrl.customAlias || newUrl.shortCode);
       setSuccess({
         shortCode: newUrl.shortCode,
         shortUrl: shortUrl

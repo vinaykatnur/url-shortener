@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../api/axiosClient';
 import { formatAnalyticsDate } from '../utils/dateFormatter';
+import { getShortUrl } from '../utils/urlHelper';
 
 const UrlAnalyticsModal = ({ urlId, urlShortCode, onClose }) => {
   const [analytics, setAnalytics] = useState(null);
@@ -28,10 +29,6 @@ const UrlAnalyticsModal = ({ urlId, urlShortCode, onClose }) => {
 
   const formatDate = (isoString) => {
     return formatAnalyticsDate(isoString);
-  };
-
-  const getShortUrl = (code) => {
-    return `${window.location.protocol}//${window.location.hostname}:8080/${code}`;
   };
 
   return (

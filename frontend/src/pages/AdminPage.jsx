@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import apiClient from '../api/axiosClient';
+import { getShortUrl } from '../utils/urlHelper';
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -61,10 +62,6 @@ const AdminPage = () => {
     } catch {
       setError('Unable to update short link enable state.');
     }
-  };
-
-  const getShortUrl = (code) => {
-    return `${window.location.protocol}//${window.location.hostname}:8080/${code}`;
   };
 
   return (
