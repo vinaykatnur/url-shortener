@@ -14,10 +14,10 @@ Horizon is a high-performance, secure, and production-ready URL shortener and re
 
 ---
 
-### 🔗 Project Links & Telemetry
-*   **Live Demo Interface**: `http://localhost:3000` *(Placeholder for deployment host)*
-*   **Production REST API**: `http://localhost:8080` *(Placeholder for production API load balancer)*
-*   **Interactive Swagger Documentation**: `http://localhost:8080/swagger-ui.html`
+### 🔗 Project Links
+*   **Live Demo Interface**: *(Deploy to get your URL)*
+*   **Production REST API**: *(Configured via `BACKEND_URL` environment variable)*
+*   **Interactive Swagger Documentation**: `http://your-backend-host/swagger-ui.html`
 
 ---
 
@@ -213,74 +213,104 @@ sequenceDiagram
 ##  Installation & Running
 
 Horizon supports profile-specific configurations using Spring Profiles:
-*   **`dev` (Development, default)**: Uses local development defaults (local Redis, local DB credentials) and logs detailed stacktraces/SQL executions.
+*   **`dev` (Development, default)**: Uses local development defaults (local Redis, local DB credentials) and logs detailed SQL executions.
 *   **`prod` (Production)**: Requires all database credentials, Redis hosts, and JWT secrets to be supplied strictly via environment variables.
 
 ### Option 1: Direct Local Setup (Development Mode)
 
-#### 1. Database Setup
-Configure locally running MySQL and Redis instances. The dev profile points to:
-*   MySQL: `jdbc:mysql://localhost:3306/url_shortener` (User: `root`, Password: `Vinay@777`)
-*   Redis: `localhost:6379`
+#### 1. Prerequisites
+- Java 17+, Maven 3.9+, Node.js 20+
+- Running MySQL 8.0 instance with database `url_shortener` created
+- Running Redis 7.x instance
 
-#### 2. Run Backend
-Start the backend using Maven:
+#### 2. Configure Local Variables
+Copy `.env.example` to `.env` and set your local database credentials.
+
+#### 3. Run Backend
 ```bash
 mvn clean spring-boot:run
 ```
 
-To run with the `prod` profile locally, specify system variables:
-```bash
-# Export variables
-export SPRING_PROFILES_ACTIVE=prod
-export DB_URL=jdbc:mysql://localhost:3306/url_shortener
-export DB_USERNAME=root
-export DB_PASSWORD=yourpassword
-export REDIS_HOST=localhost
-export REDIS_PORT=6379
-export JWT_SECRET=your_jwt_signing_key_at_least_256_bits
-export FRONTEND_URL=http://localhost:3000
-
-# Run with prod profile
-mvn clean spring-boot:run -Dspring-boot.run.profiles=prod
-```
-
-#### 3. Run Frontend
-Navigate to the frontend folder, install dependencies, and start the development server (configured automatically with local proxy paths):
+#### 4. Run Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+Frontend dev server starts at `http://localhost:3000` with proxy to backend.
 
-### Option 2: Docker Compose (Production Standard)
+### Option 2: Docker Compose
 
-Orchestrate the entire platform in one step (runs under the production configuration):
+Orchestrate the entire platform (MySQL + Redis + Backend + Frontend Nginx):
 ```bash
+# Create a .env file from the example and fill in required values
+cp .env.example .env
+# Edit .env with your JWT_SECRET and DB_PASSWORD at minimum
 docker compose up --build
 ```
-Nginx is exposed on port `3000`. Access the system via **`http://localhost:3000/`**.
+The frontend Nginx is exposed on port `3000`. Access via `http://localhost:3000/`.
+
+### Option 3: Cloud Deployment (Railway / Render / Fly.io / VPS)
+
+See the [Cloud Deployment Guide](#-cloud-deployment) section below.
+
+---
+
+## ☁️ Cloud Deployment
+
+### Prerequisites
+1. A managed MySQL 8.0 database (PlanetScale, Railway MySQL, Amazon RDS, etc.)
+2. A managed Redis instance (Railway Redis, Upstash, etc.)
+3. A cloud hosting account (Railway, Render, Fly.io, or a VPS)
+
+### Deployment Steps
+
+#### Backend (Spring Boot)
+1. Set `SPRING_PROFILES_ACTIVE=prod` in your hosting platform's environment variables.
+2. Configure all required environment variables (see table below).
+3. Deploy using the root `Dockerfile` — it builds the Spring Boot JAR and starts the server.
+
+#### Frontend (React/Vite/Nginx)
+1. Set `VITE_API_BASE_URL` build argument to your backend API URL if deploying separately:
+   - Docker Compose (Nginx proxy): `/api/v1`
+   - Separate backend deployment: `https://your-backend-host.com/api/v1`
+2. Deploy using `frontend/Dockerfile` — it builds the Vite bundle and serves via Nginx.
+
+### One-Click Deployment (Docker Compose on VPS)
+```bash
+git clone https://github.com/vinaykatnur/url-shortener.git
+cd url-shortener
+cp .env.example .env
+# Edit .env with production values
+nano .env
+docker compose up -d --build
+```
 
 ---
 
 ## 🔑 Environment Variables
 
-### Backend (`.env`)
-| Variable Name | Required Profile | Default (dev) | Description |
+### Backend
+| Variable Name | Profile | Default (dev) | Description |
 | :--- | :--- | :--- | :--- |
-| `SPRING_PROFILES_ACTIVE` | Optional | `dev` | Active environment profile (`dev` / `prod`). |
-| `DB_URL` | `prod` | `jdbc:mysql://localhost:3306/url_shortener` | MySQL database connection JDBC URL. |
+| `SPRING_PROFILES_ACTIVE` | All | `dev` | Active Spring profile (`dev` / `prod`). |
+| `DB_URL` | `prod` | local MySQL URL | MySQL database connection JDBC URL. |
 | `DB_USERNAME` | `prod` | `root` | Database user credential. |
-| `DB_PASSWORD` | `prod` | `Vinay@777` | Database password credential. |
+| `DB_PASSWORD` | `prod` | *(empty)* | Database password credential. |
 | `REDIS_HOST` | `prod` | `localhost` | Redis server host address. |
 | `REDIS_PORT` | `prod` | `6379` | Redis server connection port. |
-| `JWT_SECRET` | `prod` | `super-secret-key-for-development-only` | Secret key used for signing JWTs. |
-| `FRONTEND_URL` | `prod` | `http://localhost:3000` | Cross-Origin authorized client hostname. |
+| `REDIS_PASSWORD` | `prod` | *(empty)* | Redis authentication password. |
+| `REDIS_SSL` | `prod` | `false` | Enable TLS for Redis connection. |
+| `JWT_SECRET` | `prod` | *(dev secret)* | Secret key for signing JWTs (min 32 chars). Generate with `openssl rand -hex 32`. |
+| `JWT_ACCESS_TOKEN_EXPIRATION_MS` | All | `900000` | Access token TTL in ms (default: 15 min). |
+| `JWT_REFRESH_TOKEN_EXPIRATION_MS` | All | `2592000000` | Refresh token TTL in ms (default: 30 days). |
+| `FRONTEND_URL` | `prod` | `http://localhost:3000` | Frontend URL for CORS configuration. |
+| `PORT` | `prod` | `8080` | HTTP port the backend listens on. |
 
-### Frontend (`frontend/.env`)
+### Frontend
 | Variable Name | Required | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `VITE_API_BASE_URL` | Yes | `/api/v1` | Root URL path of the REST API endpoints. |
+| `VITE_API_BASE_URL` | Recommended | `/api/v1` | Base URL for all API requests. Set at Docker build time via `--build-arg`. |
 
 ---
 
